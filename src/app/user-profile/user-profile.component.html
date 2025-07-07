@@ -1,0 +1,375 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">
+          <i class="bi bi-person-circle me-2"></i>
+          Mein Profil
+        </h1>
+        <button 
+          type="button" 
+          class="btn btn-primary"
+          *ngIf="!isEditMode"
+          (click)="toggleEditMode()">
+          <i class="bi bi-pencil me-2"></i>
+          Bearbeiten
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-8">
+      <!-- Profile View Mode -->
+      <div *ngIf="!isEditMode && user">
+        <!-- Personal Information Card -->
+        <div class="card mb-4">
+          <div class="card-header">
+            <h5 class="card-title mb-0">
+              <i class="bi bi-person me-2"></i>
+              Persönliche Informationen
+            </h5>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label class="form-label fw-bold">Vorname:</label>
+                  <p class="mb-0">{{ user.first_name || 'Nicht angegeben' }}</p>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label class="form-label fw-bold">Nachname:</label>
+                  <p class="mb-0">{{ user.last_name || 'Nicht angegeben' }}</p>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label class="form-label fw-bold">Benutzername:</label>
+                  <p class="mb-0">{{ user.username }}</p>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label class="form-label fw-bold">E-Mail:</label>
+                  <p class="mb-0">
+                    <a [href]="'mailto:' + user.email" class="text-decoration-none">
+                      {{ user.email }}
+                    </a>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Professional Information Card -->
+        <div class="card mb-4">
+          <div class="card-header">
+            <h5 class="card-title mb-0">
+              <i class="bi bi-briefcase me-2"></i>
+              Berufliche Informationen
+            </h5>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label class="form-label fw-bold">Position:</label>
+                  <p class="mb-0">{{ user.position || 'Nicht angegeben' }}</p>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label class="form-label fw-bold">Abteilung:</label>
+                  <p class="mb-0">{{ user.department || 'Nicht angegeben' }}</p>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label class="form-label fw-bold">Mitglied seit:</label>
+                  <p class="mb-0">{{ user.date_joined | date:'dd.MM.yyyy' }}</p>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label class="form-label fw-bold">Letzter Login:</label>
+                  <p class="mb-0">{{ user.last_login ? (user.last_login | date:'dd.MM.yyyy HH:mm') : 'Nie' }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Security Information Card -->
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-title mb-0">
+              <i class="bi bi-shield-check me-2"></i>
+              Sicherheit
+            </h5>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label class="form-label fw-bold">Status:</label>
+                  <p class="mb-0">
+                    <span class="badge bg-success" *ngIf="user.is_active">Aktiv</span>
+                    <span class="badge bg-secondary" *ngIf="!user.is_active">Inaktiv</span>
+                  </p>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label class="form-label fw-bold">Berechtigungen:</label>
+                  <p class="mb-0">
+                    <span class="badge bg-primary me-1" *ngIf="user.is_staff">Staff</span>
+                    <span class="badge bg-warning" *ngIf="user.is_superuser">Admin</span>
+                    <span class="badge bg-secondary" *ngIf="!user.is_staff && !user.is_superuser">Benutzer</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12">
+                <button type="button" class="btn btn-outline-warning" (click)="showPasswordChange = true">
+                  <i class="bi bi-key me-2"></i>
+                  Passwort ändern
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Profile Edit Mode -->
+      <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" *ngIf="isEditMode">
+        <!-- Personal Information Card -->
+        <div class="card mb-4">
+          <div class="card-header">
+            <h5 class="card-title mb-0">
+              <i class="bi bi-person me-2"></i>
+              Persönliche Informationen bearbeiten
+            </h5>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="firstName" class="form-label">Vorname</label>
+                  <input 
+                    type="text" 
+                    class="form-control" 
+                    id="firstName"
+                    formControlName="first_name">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="lastName" class="form-label">Nachname</label>
+                  <input 
+                    type="text" 
+                    class="form-control" 
+                    id="lastName"
+                    formControlName="last_name">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="email" class="form-label">E-Mail *</label>
+                  <input 
+                    type="email" 
+                    class="form-control" 
+                    id="email"
+                    formControlName="email"
+                    [class.is-invalid]="profileForm.get('email')?.invalid && profileForm.get('email')?.touched">
+                  <div class="invalid-feedback" *ngIf="profileForm.get('email')?.invalid && profileForm.get('email')?.touched">
+                    Gültige E-Mail-Adresse erforderlich
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="position" class="form-label">Position</label>
+                  <input 
+                    type="text" 
+                    class="form-control" 
+                    id="position"
+                    formControlName="position"
+                    placeholder="z.B. Heizungstechniker">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="department" class="form-label">Abteilung</label>
+                  <select class="form-select" id="department" formControlName="department">
+                    <option value="">Abteilung wählen</option>
+                    <option value="Heizung">Heizung</option>
+                    <option value="Sanitär">Sanitär</option>
+                    <option value="Klima">Klima</option>
+                    <option value="Management">Management</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Error Message -->
+        <div class="alert alert-danger" *ngIf="errorMessage">
+          <i class="bi bi-exclamation-triangle me-2"></i>
+          {{ errorMessage }}
+        </div>
+
+        <!-- Actions -->
+        <div class="card">
+          <div class="card-body">
+            <div class="d-flex justify-content-between">
+              <button 
+                type="button" 
+                class="btn btn-outline-secondary"
+                (click)="cancelEdit()">
+                <i class="bi bi-x-circle me-2"></i>
+                Abbrechen
+              </button>
+              <button 
+                type="submit" 
+                class="btn btn-primary"
+                [disabled]="profileForm.invalid || isLoading">
+                <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
+                <i *ngIf="!isLoading" class="bi bi-check-circle me-2"></i>
+                Speichern
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+
+      <!-- Password Change Form -->
+      <div class="card mt-4" *ngIf="showPasswordChange">
+        <div class="card-header">
+          <h5 class="card-title mb-0">
+            <i class="bi bi-key me-2"></i>
+            Passwort ändern
+          </h5>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="passwordForm" (ngSubmit)="onPasswordSubmit()">
+            <div class="mb-3">
+              <label for="currentPassword" class="form-label">Aktuelles Passwort *</label>
+              <input 
+                type="password" 
+                class="form-control" 
+                id="currentPassword"
+                formControlName="current_password"
+                [class.is-invalid]="passwordForm.get('current_password')?.invalid && passwordForm.get('current_password')?.touched">
+              <div class="invalid-feedback" *ngIf="passwordForm.get('current_password')?.invalid && passwordForm.get('current_password')?.touched">
+                Aktuelles Passwort ist erforderlich
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="newPassword" class="form-label">Neues Passwort *</label>
+              <input 
+                type="password" 
+                class="form-control" 
+                id="newPassword"
+                formControlName="new_password"
+                [class.is-invalid]="passwordForm.get('new_password')?.invalid && passwordForm.get('new_password')?.touched">
+              <div class="invalid-feedback" *ngIf="passwordForm.get('new_password')?.invalid && passwordForm.get('new_password')?.touched">
+                <span *ngIf="passwordForm.get('new_password')?.errors?.['required']">Neues Passwort ist erforderlich</span>
+                <span *ngIf="passwordForm.get('new_password')?.errors?.['minlength']">Mindestens 8 Zeichen erforderlich</span>
+              </div>
+              <div class="form-text">Mindestens 8 Zeichen</div>
+            </div>
+            <div class="mb-3">
+              <label for="confirmPassword" class="form-label">Passwort bestätigen *</label>
+              <input 
+                type="password" 
+                class="form-control" 
+                id="confirmPassword"
+                formControlName="confirm_password"
+                [class.is-invalid]="passwordForm.get('confirm_password')?.invalid && passwordForm.get('confirm_password')?.touched">
+              <div class="invalid-feedback" *ngIf="passwordForm.get('confirm_password')?.invalid && passwordForm.get('confirm_password')?.touched">
+                <span *ngIf="passwordForm.get('confirm_password')?.errors?.['required']">Passwort-Bestätigung ist erforderlich</span>
+                <span *ngIf="passwordForm.get('confirm_password')?.errors?.['passwordMismatch']">Passwörter stimmen nicht überein</span>
+              </div>
+            </div>
+
+            <div class="alert alert-danger" *ngIf="passwordErrorMessage">
+              <i class="bi bi-exclamation-triangle me-2"></i>
+              {{ passwordErrorMessage }}
+            </div>
+
+            <div class="d-flex justify-content-between">
+              <button 
+                type="button" 
+                class="btn btn-outline-secondary"
+                (click)="cancelPasswordChange()">
+                <i class="bi bi-x-circle me-2"></i>
+                Abbrechen
+              </button>
+              <button 
+                type="submit" 
+                class="btn btn-warning"
+                [disabled]="passwordForm.invalid || isPasswordLoading">
+                <span *ngIf="isPasswordLoading" class="spinner-border spinner-border-sm me-2"></span>
+                <i *ngIf="!isPasswordLoading" class="bi bi-key me-2"></i>
+                Passwort ändern
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="card-title mb-0">
+            <i class="bi bi-info-circle me-2"></i>
+            Account Information
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="text-center mb-3">
+            <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center" 
+                 style="width: 80px; height: 80px; font-size: 2rem;">
+              {{ getInitials() }}
+            </div>
+          </div>
+          
+          <div class="mb-3">
+            <strong>Account ID:</strong>
+            <span class="text-muted">{{ user?.id }}</span>
+          </div>
+          
+          <div class="mb-3" *ngIf="user?.date_joined">
+            <strong>Registriert am:</strong>
+            <span class="text-muted">{{ user.date_joined | date:'dd.MM.yyyy' }}</span>
+          </div>
+
+          <hr>
+
+          <h6>Funktionen:</h6>
+          <ul class="small text-muted">
+            <li>Profildaten bearbeiten</li>
+            <li>Passwort ändern</li>
+            <li>E-Mail-Adresse aktualisieren</li>
+            <li>Berufliche Informationen pflegen</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

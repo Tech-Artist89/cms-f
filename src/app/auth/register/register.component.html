@@ -1,0 +1,193 @@
+<div class="min-vh-100 d-flex align-items-center bg-light">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-6 col-lg-5">
+        <div class="card shadow">
+          <div class="card-body p-5">
+            <div class="text-center mb-4">
+              <i class="bi bi-gear-fill fs-1 text-primary mb-3"></i>
+              <h2 class="h4 mb-1">CMS Mitra</h2>
+              <p class="text-muted">Neues Konto erstellen</p>
+            </div>
+
+            <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+              <!-- Persönliche Daten -->
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="firstName" class="form-label">Vorname *</label>
+                    <input 
+                      type="text" 
+                      class="form-control" 
+                      id="firstName"
+                      formControlName="firstName"
+                      [class.is-invalid]="registerForm.get('firstName')?.invalid && registerForm.get('firstName')?.touched">
+                    <div class="invalid-feedback" *ngIf="registerForm.get('firstName')?.invalid && registerForm.get('firstName')?.touched">
+                      Vorname ist erforderlich
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="lastName" class="form-label">Nachname *</label>
+                    <input 
+                      type="text" 
+                      class="form-control" 
+                      id="lastName"
+                      formControlName="lastName"
+                      [class.is-invalid]="registerForm.get('lastName')?.invalid && registerForm.get('lastName')?.touched">
+                    <div class="invalid-feedback" *ngIf="registerForm.get('lastName')?.invalid && registerForm.get('lastName')?.touched">
+                      Nachname ist erforderlich
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Login-Daten -->
+              <div class="mb-3">
+                <label for="username" class="form-label">Benutzername *</label>
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  id="username"
+                  formControlName="username"
+                  [class.is-invalid]="registerForm.get('username')?.invalid && registerForm.get('username')?.touched">
+                <div class="invalid-feedback" *ngIf="registerForm.get('username')?.invalid && registerForm.get('username')?.touched">
+                  <span *ngIf="registerForm.get('username')?.errors?.['required']">Benutzername ist erforderlich</span>
+                  <span *ngIf="registerForm.get('username')?.errors?.['minlength']">Mindestens 3 Zeichen erforderlich</span>
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label for="email" class="form-label">E-Mail-Adresse *</label>
+                <input 
+                  type="email" 
+                  class="form-control" 
+                  id="email"
+                  formControlName="email"
+                  [class.is-invalid]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched">
+                <div class="invalid-feedback" *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched">
+                  <span *ngIf="registerForm.get('email')?.errors?.['required']">E-Mail ist erforderlich</span>
+                  <span *ngIf="registerForm.get('email')?.errors?.['email']">Gültige E-Mail-Adresse eingeben</span>
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label for="password" class="form-label">Passwort *</label>
+                <div class="input-group">
+                  <input 
+                    [type]="showPassword ? 'text' : 'password'" 
+                    class="form-control" 
+                    id="password"
+                    formControlName="password"
+                    [class.is-invalid]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched">
+                  <button 
+                    type="button" 
+                    class="btn btn-outline-secondary"
+                    (click)="togglePasswordVisibility()">
+                    <i class="bi" [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'"></i>
+                  </button>
+                </div>
+                <div class="invalid-feedback" *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched">
+                  <span *ngIf="registerForm.get('password')?.errors?.['required']">Passwort ist erforderlich</span>
+                  <span *ngIf="registerForm.get('password')?.errors?.['minlength']">Mindestens 8 Zeichen erforderlich</span>
+                  <span *ngIf="registerForm.get('password')?.errors?.['pattern']">Passwort muss Buchstaben und Zahlen enthalten</span>
+                </div>
+                <div class="form-text">
+                  Mindestens 8 Zeichen, mit Buchstaben und Zahlen
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label for="confirmPassword" class="form-label">Passwort bestätigen *</label>
+                <input 
+                  type="password" 
+                  class="form-control" 
+                  id="confirmPassword"
+                  formControlName="confirmPassword"
+                  [class.is-invalid]="registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched">
+                <div class="invalid-feedback" *ngIf="registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched">
+                  <span *ngIf="registerForm.get('confirmPassword')?.errors?.['required']">Passwort-Bestätigung ist erforderlich</span>
+                  <span *ngIf="registerForm.get('confirmPassword')?.errors?.['passwordMismatch']">Passwörter stimmen nicht überein</span>
+                </div>
+              </div>
+
+              <!-- Berufs-Informationen -->
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="position" class="form-label">Position</label>
+                    <input 
+                      type="text" 
+                      class="form-control" 
+                      id="position"
+                      formControlName="position"
+                      placeholder="z.B. Heizungstechniker">
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="department" class="form-label">Abteilung</label>
+                    <select class="form-select" id="department" formControlName="department">
+                      <option value="">Abteilung wählen</option>
+                      <option value="Heizung">Heizung</option>
+                      <option value="Sanitär">Sanitär</option>
+                      <option value="Klima">Klima</option>
+                      <option value="Management">Management</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Datenschutz -->
+              <div class="mb-4">
+                <div class="form-check">
+                  <input 
+                    class="form-check-input" 
+                    type="checkbox" 
+                    id="agreeTerms"
+                    formControlName="agreeTerms"
+                    [class.is-invalid]="registerForm.get('agreeTerms')?.invalid && registerForm.get('agreeTerms')?.touched">
+                  <label class="form-check-label" for="agreeTerms">
+                    Ich stimme den <a href="#" class="text-decoration-none">Nutzungsbedingungen</a> und der 
+                    <a href="#" class="text-decoration-none">Datenschutzerklärung</a> zu *
+                  </label>
+                  <div class="invalid-feedback" *ngIf="registerForm.get('agreeTerms')?.invalid && registerForm.get('agreeTerms')?.touched">
+                    Sie müssen den Bedingungen zustimmen
+                  </div>
+                </div>
+              </div>
+
+              <!-- Error Message -->
+              <div class="alert alert-danger" *ngIf="errorMessage">
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                {{ errorMessage }}
+              </div>
+
+              <!-- Submit Button -->
+              <div class="d-grid gap-2">
+                <button 
+                  type="submit" 
+                  class="btn btn-primary"
+                  [disabled]="registerForm.invalid || isLoading">
+                  <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
+                  <i *ngIf="!isLoading" class="bi bi-person-plus me-2"></i>
+                  {{ isLoading ? 'Erstelle Konto...' : 'Konto erstellen' }}
+                </button>
+              </div>
+            </form>
+
+            <hr class="my-4">
+
+            <div class="text-center">
+              <p class="mb-0">
+                Bereits ein Konto? 
+                <a routerLink="/login" class="text-decoration-none">Jetzt anmelden</a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,126 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Projektübersicht</h2>
+        <button class="btn btn-primary" routerLink="/projects/new">
+          <i class="bi bi-plus"></i> Neues Projekt
+        </button>
+      </div>
+
+      <div class="alert alert-danger" *ngIf="error">
+        {{ error }}
+      </div>
+
+      <div class="text-center" *ngIf="loading">
+        <div class="spinner-border" role="status">
+          <span class="visually-hidden">Laden...</span>
+        </div>
+      </div>
+
+      <div class="row" *ngIf="!loading">
+        <div class="col-12 col-md-6 col-lg-4 mb-3" *ngFor="let project of projects">
+          <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <h6 class="card-title mb-0">{{ project.project_number }}</h6>
+              <span [class]="getStatusBadgeClass(project.status)">
+                {{ getStatusLabel(project.status) }}
+              </span>
+            </div>
+            <div class="card-body">
+              <h5 class="card-title">{{ project.name }}</h5>
+              <p class="card-text text-muted">{{ project.customer_name || 'Kunde #' + project.customer }}</p>
+              <p class="card-text" *ngIf="project.description">
+                {{ project.description | slice:0:100 }}{{ project.description.length > 100 ? '...' : '' }}
+              </p>
+              
+              <div class="row mb-2">
+                <div class="col-6">
+                  <small class="text-muted">Priorität:</small><br>
+                  <span [class]="getPriorityBadgeClass(project.priority)">
+                    {{ getPriorityLabel(project.priority) }}
+                  </span>
+                </div>
+                <div class="col-6">
+                  <small class="text-muted">Verantwortlich:</small><br>
+                  <span>{{ project.responsible_user_name || 'Nicht zugewiesen' }}</span>
+                </div>
+              </div>
+
+              <div class="mb-2">
+                <small class="text-muted">Fortschritt: {{ project.progress_percentage }}%</small>
+                <div class="progress">
+                  <div 
+                    [class]="getProgressBarClass(project.progress_percentage)"
+                    role="progressbar"
+                    [style.width.%]="project.progress_percentage"
+                    [attr.aria-valuenow]="project.progress_percentage"
+                    aria-valuemin="0"
+                    aria-valuemax="100">
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-6">
+                  <small class="text-muted">Start:</small><br>
+                  <span>{{ project.start_date | date:'dd.MM.yyyy' }}</span>
+                </div>
+                <div class="col-6">
+                  <small class="text-muted">Geplant bis:</small><br>
+                  <span>{{ project.planned_end_date | date:'dd.MM.yyyy' }}</span>
+                </div>
+              </div>
+
+              <div class="row mt-2" *ngIf="project.budget || project.actual_cost">
+                <div class="col-6">
+                  <small class="text-muted">Budget:</small><br>
+                  <span>{{ project.budget | currency:'EUR':'symbol':'1.2-2' }}</span>
+                </div>
+                <div class="col-6">
+                  <small class="text-muted">Ist-Kosten:</small><br>
+                  <span>{{ project.actual_cost | currency:'EUR':'symbol':'1.2-2' }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="card-footer">
+              <div class="btn-group w-100" role="group">
+                <button 
+                  class="btn btn-sm btn-outline-primary" 
+                  [routerLink]="['/projects', project.id]"
+                  title="Anzeigen">
+                  <i class="bi bi-eye"></i>
+                </button>
+                <button 
+                  class="btn btn-sm btn-outline-secondary" 
+                  [routerLink]="['/projects', project.id, 'edit']"
+                  title="Bearbeiten">
+                  <i class="bi bi-pencil"></i>
+                </button>
+                <button 
+                  class="btn btn-sm btn-outline-info" 
+                  [routerLink]="['/projects', project.id, 'tasks']"
+                  title="Aufgaben">
+                  <i class="bi bi-list-task"></i>
+                </button>
+                <button 
+                  class="btn btn-sm btn-outline-danger" 
+                  (click)="deleteProject(project.id)"
+                  title="Löschen">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-12" *ngIf="projects.length === 0">
+          <div class="text-center text-muted py-5">
+            <i class="bi bi-folder2-open display-4"></i>
+            <p class="mt-3">Keine Projekte vorhanden</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

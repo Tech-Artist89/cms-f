@@ -1,0 +1,511 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">
+          <i class="bi bi-gear me-2"></i>
+          Einstellungen
+        </h1>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <!-- Settings Navigation -->
+    <div class="col-lg-3">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="card-title mb-0">Kategorien</h5>
+        </div>
+        <div class="list-group list-group-flush">
+          <button 
+            type="button"
+            class="list-group-item list-group-item-action"
+            [class.active]="activeTab === 'appearance'"
+            (click)="setActiveTab('appearance')">
+            <i class="bi bi-palette me-2"></i>
+            Darstellung
+          </button>
+          <button 
+            type="button"
+            class="list-group-item list-group-item-action"
+            [class.active]="activeTab === 'notifications'"
+            (click)="setActiveTab('notifications')">
+            <i class="bi bi-bell me-2"></i>
+            Benachrichtigungen
+          </button>
+          <button 
+            type="button"
+            class="list-group-item list-group-item-action"
+            [class.active]="activeTab === 'language'"
+            (click)="setActiveTab('language')">
+            <i class="bi bi-translate me-2"></i>
+            Sprache & Region
+          </button>
+          <button 
+            type="button"
+            class="list-group-item list-group-item-action"
+            [class.active]="activeTab === 'timetracking'"
+            (click)="setActiveTab('timetracking')">
+            <i class="bi bi-clock me-2"></i>
+            Zeiterfassung
+          </button>
+          <button 
+            type="button"
+            class="list-group-item list-group-item-action"
+            [class.active]="activeTab === 'system'"
+            (click)="setActiveTab('system')">
+            <i class="bi bi-cpu me-2"></i>
+            System
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings Content -->
+    <div class="col-lg-9">
+      <!-- Appearance Settings -->
+      <div class="card" *ngIf="activeTab === 'appearance'">
+        <div class="card-header">
+          <h5 class="card-title mb-0">
+            <i class="bi bi-palette me-2"></i>
+            Darstellung
+          </h5>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="appearanceForm" (ngSubmit)="saveAppearanceSettings()">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-4">
+                  <label class="form-label fw-bold">Theme</label>
+                  <div class="row g-3">
+                    <div class="col-md-4">
+                      <div class="form-check form-check-card">
+                        <input 
+                          class="form-check-input" 
+                          type="radio" 
+                          name="theme" 
+                          id="themeLight"
+                          value="light"
+                          formControlName="theme">
+                        <label class="form-check-label" for="themeLight">
+                          <div class="card h-100">
+                            <div class="card-body text-center p-3">
+                              <i class="bi bi-sun fs-1 text-warning"></i>
+                              <div class="mt-2">Hell</div>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="form-check form-check-card">
+                        <input 
+                          class="form-check-input" 
+                          type="radio" 
+                          name="theme" 
+                          id="themeDark"
+                          value="dark"
+                          formControlName="theme">
+                        <label class="form-check-label" for="themeDark">
+                          <div class="card h-100">
+                            <div class="card-body text-center p-3">
+                              <i class="bi bi-moon fs-1 text-primary"></i>
+                              <div class="mt-2">Dunkel</div>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="form-check form-check-card">
+                        <input 
+                          class="form-check-input" 
+                          type="radio" 
+                          name="theme" 
+                          id="themeAuto"
+                          value="auto"
+                          formControlName="theme">
+                        <label class="form-check-label" for="themeAuto">
+                          <div class="card h-100">
+                            <div class="card-body text-center p-3">
+                              <i class="bi bi-circle-half fs-1 text-info"></i>
+                              <div class="mt-2">Auto</div>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="fontSize" class="form-label">Schriftgröße</label>
+                  <select class="form-select" id="fontSize" formControlName="fontSize">
+                    <option value="small">Klein</option>
+                    <option value="medium">Mittel</option>
+                    <option value="large">Groß</option>
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <div class="form-check">
+                    <input 
+                      class="form-check-input" 
+                      type="checkbox" 
+                      id="compactMode"
+                      formControlName="compactMode">
+                    <label class="form-check-label" for="compactMode">
+                      Kompakte Ansicht
+                    </label>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <div class="form-check">
+                    <input 
+                      class="form-check-input" 
+                      type="checkbox" 
+                      id="animationsEnabled"
+                      formControlName="animationsEnabled">
+                    <label class="form-check-label" for="animationsEnabled">
+                      Animationen aktivieren
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="d-flex justify-content-end">
+              <button type="submit" class="btn btn-primary" [disabled]="appearanceForm.invalid || isLoading">
+                <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
+                <i *ngIf="!isLoading" class="bi bi-check-circle me-2"></i>
+                Speichern
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Notifications Settings -->
+      <div class="card" *ngIf="activeTab === 'notifications'">
+        <div class="card-header">
+          <h5 class="card-title mb-0">
+            <i class="bi bi-bell me-2"></i>
+            Benachrichtigungen
+          </h5>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="notificationForm" (ngSubmit)="saveNotificationSettings()">
+            <div class="row">
+              <div class="col-md-6">
+                <h6 class="fw-bold mb-3">E-Mail Benachrichtigungen</h6>
+                <div class="mb-3">
+                  <div class="form-check">
+                    <input 
+                      class="form-check-input" 
+                      type="checkbox" 
+                      id="emailProjects"
+                      formControlName="emailProjects">
+                    <label class="form-check-label" for="emailProjects">
+                      Projekt-Updates
+                    </label>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <div class="form-check">
+                    <input 
+                      class="form-check-input" 
+                      type="checkbox" 
+                      id="emailInvoices"
+                      formControlName="emailInvoices">
+                    <label class="form-check-label" for="emailInvoices">
+                      Rechnungs-Erinnerungen
+                    </label>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <div class="form-check">
+                    <input 
+                      class="form-check-input" 
+                      type="checkbox" 
+                      id="emailReminders"
+                      formControlName="emailReminders">
+                    <label class="form-check-label" for="emailReminders">
+                      Termin-Erinnerungen
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <h6 class="fw-bold mb-3">Browser Benachrichtigungen</h6>
+                <div class="mb-3">
+                  <div class="form-check">
+                    <input 
+                      class="form-check-input" 
+                      type="checkbox" 
+                      id="browserNotifications"
+                      formControlName="browserNotifications">
+                    <label class="form-check-label" for="browserNotifications">
+                      Browser-Benachrichtigungen aktivieren
+                    </label>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <div class="form-check">
+                    <input 
+                      class="form-check-input" 
+                      type="checkbox" 
+                      id="soundNotifications"
+                      formControlName="soundNotifications">
+                    <label class="form-check-label" for="soundNotifications">
+                      Benachrichtigungstöne
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="d-flex justify-content-end">
+              <button type="submit" class="btn btn-primary" [disabled]="notificationForm.invalid || isLoading">
+                <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
+                <i *ngIf="!isLoading" class="bi bi-check-circle me-2"></i>
+                Speichern
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Language & Region Settings -->
+      <div class="card" *ngIf="activeTab === 'language'">
+        <div class="card-header">
+          <h5 class="card-title mb-0">
+            <i class="bi bi-translate me-2"></i>
+            Sprache & Region
+          </h5>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="languageForm" (ngSubmit)="saveLanguageSettings()">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="language" class="form-label">Sprache</label>
+                  <select class="form-select" id="language" formControlName="language">
+                    <option value="de">Deutsch</option>
+                    <option value="en">English</option>
+                    <option value="fr">Français</option>
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label for="timezone" class="form-label">Zeitzone</label>
+                  <select class="form-select" id="timezone" formControlName="timezone">
+                    <option value="Europe/Berlin">Europa/Berlin (MEZ)</option>
+                    <option value="Europe/London">Europa/London (GMT)</option>
+                    <option value="America/New_York">Amerika/New York (EST)</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="dateFormat" class="form-label">Datumsformat</label>
+                  <select class="form-select" id="dateFormat" formControlName="dateFormat">
+                    <option value="DD.MM.YYYY">DD.MM.YYYY (31.12.2024)</option>
+                    <option value="MM/DD/YYYY">MM/DD/YYYY (12/31/2024)</option>
+                    <option value="YYYY-MM-DD">YYYY-MM-DD (2024-12-31)</option>
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label for="timeFormat" class="form-label">Zeitformat</label>
+                  <select class="form-select" id="timeFormat" formControlName="timeFormat">
+                    <option value="24h">24 Stunden (14:30)</option>
+                    <option value="12h">12 Stunden (2:30 PM)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="d-flex justify-content-end">
+              <button type="submit" class="btn btn-primary" [disabled]="languageForm.invalid || isLoading">
+                <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
+                <i *ngIf="!isLoading" class="bi bi-check-circle me-2"></i>
+                Speichern
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Timetracking Settings -->
+      <div class="card" *ngIf="activeTab === 'timetracking'">
+        <div class="card-header">
+          <h5 class="card-title mb-0">
+            <i class="bi bi-clock me-2"></i>
+            Zeiterfassung
+          </h5>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="timetrackingForm" (ngSubmit)="saveTimetrackingSettings()">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="defaultProject" class="form-label">Standard-Projekt</label>
+                  <select class="form-select" id="defaultProject" formControlName="defaultProject">
+                    <option value="">Kein Standard-Projekt</option>
+                    <option value="1">Heizungsmodernisierung Müller</option>
+                    <option value="2">Sanitärinstallation Schmidt</option>
+                    <option value="3">Klimaanlage Weber KG</option>
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <div class="form-check">
+                    <input 
+                      class="form-check-input" 
+                      type="checkbox" 
+                      id="autoStartTimer"
+                      formControlName="autoStartTimer">
+                    <label class="form-check-label" for="autoStartTimer">
+                      Timer automatisch starten
+                    </label>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <div class="form-check">
+                    <input 
+                      class="form-check-input" 
+                      type="checkbox" 
+                      id="remindBreaks"
+                      formControlName="remindBreaks">
+                    <label class="form-check-label" for="remindBreaks">
+                      Pausenerinnerungen
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="workingHoursStart" class="form-label">Arbeitsbeginn</label>
+                  <input 
+                    type="time" 
+                    class="form-control" 
+                    id="workingHoursStart"
+                    formControlName="workingHoursStart">
+                </div>
+                <div class="mb-3">
+                  <label for="workingHoursEnd" class="form-label">Arbeitsende</label>
+                  <input 
+                    type="time" 
+                    class="form-control" 
+                    id="workingHoursEnd"
+                    formControlName="workingHoursEnd">
+                </div>
+                <div class="mb-3">
+                  <label for="roundingMinutes" class="form-label">Rundung (Minuten)</label>
+                  <select class="form-select" id="roundingMinutes" formControlName="roundingMinutes">
+                    <option value="1">Keine Rundung</option>
+                    <option value="5">5 Minuten</option>
+                    <option value="15">15 Minuten</option>
+                    <option value="30">30 Minuten</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="d-flex justify-content-end">
+              <button type="submit" class="btn btn-primary" [disabled]="timetrackingForm.invalid || isLoading">
+                <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
+                <i *ngIf="!isLoading" class="bi bi-check-circle me-2"></i>
+                Speichern
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- System Settings -->
+      <div class="card" *ngIf="activeTab === 'system'">
+        <div class="card-header">
+          <h5 class="card-title mb-0">
+            <i class="bi bi-cpu me-2"></i>
+            System
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <h6 class="fw-bold mb-3">Daten & Backup</h6>
+              <div class="mb-3">
+                <button type="button" class="btn btn-outline-primary">
+                  <i class="bi bi-download me-2"></i>
+                  Daten exportieren
+                </button>
+              </div>
+              <div class="mb-3">
+                <button type="button" class="btn btn-outline-info">
+                  <i class="bi bi-arrow-clockwise me-2"></i>
+                  Cache leeren
+                </button>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <h6 class="fw-bold mb-3">Erweitert</h6>
+              <div class="mb-3">
+                <div class="form-check">
+                  <input 
+                    class="form-check-input" 
+                    type="checkbox" 
+                    id="debugMode">
+                  <label class="form-check-label" for="debugMode">
+                    Debug-Modus aktivieren
+                  </label>
+                </div>
+              </div>
+              <div class="mb-3">
+                <div class="form-check">
+                  <input 
+                    class="form-check-input" 
+                    type="checkbox" 
+                    id="analyticsEnabled">
+                  <label class="form-check-label" for="analyticsEnabled">
+                    Anonyme Nutzungsstatistiken
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <hr>
+          
+          <div class="row">
+            <div class="col-12">
+              <h6 class="fw-bold mb-3">Systeminfo</h6>
+              <div class="table-responsive">
+                <table class="table table-sm">
+                  <tr>
+                    <td><strong>Version:</strong></td>
+                    <td>CMS Mitra v1.0.0</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Browser:</strong></td>
+                    <td>{{ getBrowserInfo() }}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Letztes Update:</strong></td>
+                    <td>{{ getLastUpdate() | date:'dd.MM.yyyy HH:mm' }}</td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Success Message -->
+      <div class="alert alert-success mt-3" *ngIf="successMessage">
+        <i class="bi bi-check-circle me-2"></i>
+        {{ successMessage }}
+      </div>
+
+      <!-- Error Message -->
+      <div class="alert alert-danger mt-3" *ngIf="errorMessage">
+        <i class="bi bi-exclamation-triangle me-2"></i>
+        {{ errorMessage }}
+      </div>
+    </div>
+  </div>
+</div>

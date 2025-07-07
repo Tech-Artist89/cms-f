@@ -1,0 +1,296 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">
+          <i class="bi bi-clock me-2"></i>
+          {{ isEditMode ? 'Zeiteintrag bearbeiten' : 'Neuer Zeiteintrag' }}
+        </h1>
+        <button type="button" class="btn btn-outline-secondary" routerLink="/timetracking">
+          <i class="bi bi-arrow-left me-2"></i>
+          Zurück
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-8">
+      <form [formGroup]="timeEntryForm" (ngSubmit)="onSubmit()">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-title mb-0">
+              <i class="bi bi-info-circle me-2"></i>
+              Eintrag Details
+            </h5>
+          </div>
+          <div class="card-body">
+            <!-- Projekt und Beschreibung -->
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="project" class="form-label">Projekt</label>
+                  <select 
+                    class="form-select" 
+                    id="project"
+                    formControlName="project">
+                    <option value="">Kein Projekt</option>
+                    <option value="1">Heizungsmodernisierung Müller</option>
+                    <option value="2">Sanitärinstallation Schmidt</option>
+                    <option value="3">Klimaanlage Weber KG</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="entryType" class="form-label">Typ</label>
+                  <select 
+                    class="form-select" 
+                    id="entryType"
+                    formControlName="entry_type">
+                    <option value="work">Arbeitszeit</option>
+                    <option value="break">Pause</option>
+                    <option value="travel">Fahrt</option>
+                    <option value="training">Schulung</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="description" class="form-label">Beschreibung *</label>
+              <textarea 
+                class="form-control" 
+                id="description"
+                formControlName="description"
+                rows="3"
+                placeholder="Was haben Sie gemacht?"
+                [class.is-invalid]="timeEntryForm.get('description')?.invalid && timeEntryForm.get('description')?.touched">
+              </textarea>
+              <div class="invalid-feedback" *ngIf="timeEntryForm.get('description')?.invalid && timeEntryForm.get('description')?.touched">
+                Beschreibung ist erforderlich
+              </div>
+            </div>
+
+            <!-- Zeit und Datum -->
+            <div class="row">
+              <div class="col-md-4">
+                <div class="mb-3">
+                  <label for="date" class="form-label">Datum *</label>
+                  <input 
+                    type="date" 
+                    class="form-control" 
+                    id="date"
+                    formControlName="date"
+                    [class.is-invalid]="timeEntryForm.get('date')?.invalid && timeEntryForm.get('date')?.touched">
+                  <div class="invalid-feedback" *ngIf="timeEntryForm.get('date')?.invalid && timeEntryForm.get('date')?.touched">
+                    Datum ist erforderlich
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="mb-3">
+                  <label for="startTime" class="form-label">Startzeit *</label>
+                  <input 
+                    type="time" 
+                    class="form-control" 
+                    id="startTime"
+                    formControlName="start_time"
+                    [class.is-invalid]="timeEntryForm.get('start_time')?.invalid && timeEntryForm.get('start_time')?.touched">
+                  <div class="invalid-feedback" *ngIf="timeEntryForm.get('start_time')?.invalid && timeEntryForm.get('start_time')?.touched">
+                    Startzeit ist erforderlich
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="mb-3">
+                  <label for="endTime" class="form-label">Endzeit</label>
+                  <input 
+                    type="time" 
+                    class="form-control" 
+                    id="endTime"
+                    formControlName="end_time">
+                  <div class="form-text">Leer lassen für laufenden Timer</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Manuelle Dauer -->
+            <div class="row" *ngIf="!timeEntryForm.get('end_time')?.value">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="durationHours" class="form-label">Dauer (Stunden)</label>
+                  <input 
+                    type="number" 
+                    class="form-control" 
+                    id="durationHours"
+                    formControlName="duration_hours"
+                    min="0"
+                    step="0.25"
+                    placeholder="z.B. 2.5">
+                  <div class="form-text">Wird automatisch berechnet wenn Start- und Endzeit gesetzt sind</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Optionen -->
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-check mb-3">
+                  <input 
+                    class="form-check-input" 
+                    type="checkbox" 
+                    id="isBillable"
+                    formControlName="is_billable">
+                  <label class="form-check-label" for="isBillable">
+                    Abrechenbar
+                  </label>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-check mb-3">
+                  <input 
+                    class="form-check-input" 
+                    type="checkbox" 
+                    id="isOvertime"
+                    formControlName="is_overtime">
+                  <label class="form-check-label" for="isOvertime">
+                    Überstunden
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Notizen -->
+            <div class="mb-3">
+              <label for="notes" class="form-label">Notizen</label>
+              <textarea 
+                class="form-control" 
+                id="notes"
+                formControlName="notes"
+                rows="2"
+                placeholder="Zusätzliche Informationen...">
+              </textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Error Message -->
+        <div class="alert alert-danger mt-3" *ngIf="errorMessage">
+          <i class="bi bi-exclamation-triangle me-2"></i>
+          {{ errorMessage }}
+        </div>
+
+        <!-- Actions -->
+        <div class="card mt-3">
+          <div class="card-body">
+            <div class="d-flex justify-content-between">
+              <button 
+                type="button" 
+                class="btn btn-outline-secondary"
+                (click)="cancel()">
+                <i class="bi bi-x-circle me-2"></i>
+                Abbrechen
+              </button>
+              <div>
+                <button 
+                  type="button" 
+                  class="btn btn-outline-primary me-2"
+                  (click)="saveAsDraft()"
+                  [disabled]="isLoading">
+                  <i class="bi bi-file-earmark me-2"></i>
+                  Als Entwurf speichern
+                </button>
+                <button 
+                  type="submit" 
+                  class="btn btn-primary"
+                  [disabled]="timeEntryForm.invalid || isLoading">
+                  <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
+                  <i *ngIf="!isLoading" class="bi bi-check-circle me-2"></i>
+                  {{ isEditMode ? 'Aktualisieren' : 'Erstellen' }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Sidebar mit Informationen -->
+    <div class="col-lg-4">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="card-title mb-0">
+            <i class="bi bi-info-circle me-2"></i>
+            Informationen
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <strong>Berechnete Dauer:</strong>
+            <span class="text-primary">{{ getCalculatedDuration() }}</span>
+          </div>
+          
+          <div class="mb-3" *ngIf="timeEntryForm.get('is_billable')?.value">
+            <div class="alert alert-success alert-sm">
+              <i class="bi bi-check-circle me-2"></i>
+              Dieser Eintrag ist abrechenbar
+            </div>
+          </div>
+
+          <div class="mb-3" *ngIf="timeEntryForm.get('is_overtime')?.value">
+            <div class="alert alert-warning alert-sm">
+              <i class="bi bi-exclamation-triangle me-2"></i>
+              Überstunden werden gesondert erfasst
+            </div>
+          </div>
+
+          <hr>
+
+          <h6>Tipps:</h6>
+          <ul class="small text-muted">
+            <li>Beschreibung sollte aussagekräftig sein</li>
+            <li>Bei laufenden Timern Endzeit leer lassen</li>
+            <li>Überstunden separat kennzeichnen</li>
+            <li>Abrechenbare Zeit für Kundenprojekte markieren</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Quick Timer Start -->
+      <div class="card mt-3" *ngIf="!isEditMode">
+        <div class="card-header">
+          <h5 class="card-title mb-0">
+            <i class="bi bi-play-circle me-2"></i>
+            Quick Timer
+          </h5>
+        </div>
+        <div class="card-body">
+          <p class="small text-muted mb-3">
+            Starten Sie einen Timer für häufige Aufgaben
+          </p>
+          <div class="d-grid gap-2">
+            <button 
+              type="button" 
+              class="btn btn-outline-success btn-sm"
+              (click)="startQuickTimer('Projektarbeit')">
+              <i class="bi bi-play me-1"></i> Projektarbeit
+            </button>
+            <button 
+              type="button" 
+              class="btn btn-outline-info btn-sm"
+              (click)="startQuickTimer('Kundenbesprechung')">
+              <i class="bi bi-play me-1"></i> Kundenbesprechung
+            </button>
+            <button 
+              type="button" 
+              class="btn btn-outline-warning btn-sm"
+              (click)="startQuickTimer('Fahrt')">
+              <i class="bi bi-play me-1"></i> Fahrt
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

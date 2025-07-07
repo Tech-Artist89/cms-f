@@ -1,0 +1,83 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand fw-bold" routerLink="/">
+      <i class="bi bi-gear-fill me-2"></i>
+      CMS Mitra
+    </a>
+    
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/dashboard" routerLinkActive="active">
+            <i class="bi bi-speedometer2 me-1"></i>
+            Dashboard
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/customers" routerLinkActive="active">
+            <i class="bi bi-people me-1"></i>
+            Kunden
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/quotes" routerLinkActive="active">
+            <i class="bi bi-file-text me-1"></i>
+            Angebote
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/projects" routerLinkActive="active">
+            <i class="bi bi-kanban me-1"></i>
+            Projekte
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/invoices" routerLinkActive="active">
+            <i class="bi bi-receipt me-1"></i>
+            Rechnungen
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/timetracking" routerLinkActive="active">
+            <i class="bi bi-clock me-1"></i>
+            Zeiterfassung
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/schedules" routerLinkActive="active">
+            <i class="bi bi-calendar-week me-1"></i>
+            Termine
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/employees" routerLinkActive="active">
+            <i class="bi bi-person-badge me-1"></i>
+            Mitarbeiter
+          </a>
+        </li>
+      </ul>
+      
+      <ul class="navbar-nav" *ngIf="authService.isAuthenticated()">
+        <li class="nav-item me-2">
+          <app-theme-toggle></app-theme-toggle>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+            <i class="bi bi-person-circle me-1"></i>
+            {{ authService.getUser()?.username || 'Benutzer' }}
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i>Profil</a></li>
+            <li><a class="dropdown-item" href="#"><i class="bi bi-gear me-2"></i>Einstellungen</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="#" (click)="logout()"><i class="bi bi-box-arrow-right me-2"></i>Abmelden</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>

@@ -1,0 +1,431 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">
+          <i class="bi bi-person-badge me-2"></i>
+          {{ isEditMode ? (isNewEmployee ? 'Neuer Mitarbeiter' : 'Mitarbeiter bearbeiten') : 'Mitarbeiter Details' }}
+        </h1>
+        <div class="btn-group">
+          <button type="button" class="btn btn-outline-secondary" routerLink="/employees">
+            <i class="bi bi-arrow-left me-2"></i>
+            Zurück
+          </button>
+          <button 
+            *ngIf="!isEditMode && !isNewEmployee" 
+            type="button" 
+            class="btn btn-primary"
+            (click)="toggleEditMode()">
+            <i class="bi bi-pencil me-2"></i>
+            Bearbeiten
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-12">
+      <form [formGroup]="employeeForm" (ngSubmit)="onSubmit()" *ngIf="isEditMode">
+        <!-- Persönliche Daten -->
+        <div class="card mb-4">
+          <div class="card-header">
+            <h5 class="card-title mb-0">
+              <i class="bi bi-person me-2"></i>
+              Persönliche Daten
+            </h5>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="firstName" class="form-label">Vorname *</label>
+                  <input 
+                    type="text" 
+                    class="form-control" 
+                    id="firstName"
+                    formControlName="firstName"
+                    [class.is-invalid]="employeeForm.get('firstName')?.invalid && employeeForm.get('firstName')?.touched">
+                  <div class="invalid-feedback" *ngIf="employeeForm.get('firstName')?.invalid && employeeForm.get('firstName')?.touched">
+                    Vorname ist erforderlich
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="lastName" class="form-label">Nachname *</label>
+                  <input 
+                    type="text" 
+                    class="form-control" 
+                    id="lastName"
+                    formControlName="lastName"
+                    [class.is-invalid]="employeeForm.get('lastName')?.invalid && employeeForm.get('lastName')?.touched">
+                  <div class="invalid-feedback" *ngIf="employeeForm.get('lastName')?.invalid && employeeForm.get('lastName')?.touched">
+                    Nachname ist erforderlich
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="email" class="form-label">E-Mail *</label>
+                  <input 
+                    type="email" 
+                    class="form-control" 
+                    id="email"
+                    formControlName="email"
+                    [class.is-invalid]="employeeForm.get('email')?.invalid && employeeForm.get('email')?.touched">
+                  <div class="invalid-feedback" *ngIf="employeeForm.get('email')?.invalid && employeeForm.get('email')?.touched">
+                    <span *ngIf="employeeForm.get('email')?.errors?.['required']">E-Mail ist erforderlich</span>
+                    <span *ngIf="employeeForm.get('email')?.errors?.['email']">Gültige E-Mail-Adresse eingeben</span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="phone" class="form-label">Telefon *</label>
+                  <input 
+                    type="tel" 
+                    class="form-control" 
+                    id="phone"
+                    formControlName="phone"
+                    [class.is-invalid]="employeeForm.get('phone')?.invalid && employeeForm.get('phone')?.touched">
+                  <div class="invalid-feedback" *ngIf="employeeForm.get('phone')?.invalid && employeeForm.get('phone')?.touched">
+                    Telefonnummer ist erforderlich
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Berufliche Daten -->
+        <div class="card mb-4">
+          <div class="card-header">
+            <h5 class="card-title mb-0">
+              <i class="bi bi-briefcase me-2"></i>
+              Berufliche Daten
+            </h5>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="position" class="form-label">Position *</label>
+                  <input 
+                    type="text" 
+                    class="form-control" 
+                    id="position"
+                    formControlName="position"
+                    [class.is-invalid]="employeeForm.get('position')?.invalid && employeeForm.get('position')?.touched">
+                  <div class="invalid-feedback" *ngIf="employeeForm.get('position')?.invalid && employeeForm.get('position')?.touched">
+                    Position ist erforderlich
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="department" class="form-label">Abteilung *</label>
+                  <select 
+                    class="form-select" 
+                    id="department"
+                    formControlName="department"
+                    [class.is-invalid]="employeeForm.get('department')?.invalid && employeeForm.get('department')?.touched">
+                    <option value="">Abteilung wählen</option>
+                    <option value="Heizung">Heizung</option>
+                    <option value="Sanitär">Sanitär</option>
+                    <option value="Klima">Klima</option>
+                    <option value="Management">Management</option>
+                  </select>
+                  <div class="invalid-feedback" *ngIf="employeeForm.get('department')?.invalid && employeeForm.get('department')?.touched">
+                    Abteilung ist erforderlich
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="hireDate" class="form-label">Einstellungsdatum *</label>
+                  <input 
+                    type="date" 
+                    class="form-control" 
+                    id="hireDate"
+                    formControlName="hireDate"
+                    [class.is-invalid]="employeeForm.get('hireDate')?.invalid && employeeForm.get('hireDate')?.touched">
+                  <div class="invalid-feedback" *ngIf="employeeForm.get('hireDate')?.invalid && employeeForm.get('hireDate')?.touched">
+                    Einstellungsdatum ist erforderlich
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="hourlyRate" class="form-label">Stundensatz (€)</label>
+                  <input 
+                    type="number" 
+                    class="form-control" 
+                    id="hourlyRate"
+                    formControlName="hourlyRate"
+                    min="0"
+                    step="0.01">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12">
+                <div class="mb-3">
+                  <label for="skills" class="form-label">Fähigkeiten</label>
+                  <input 
+                    type="text" 
+                    class="form-control" 
+                    id="skills"
+                    formControlName="skillsString"
+                    placeholder="Fähigkeiten mit Komma getrennt (z.B. Heizungsinstallation, Wartung, Gasanlagen)">
+                  <div class="form-text">Fähigkeiten durch Kommas getrennt eingeben</div>
+                </div>
+              </div>
+            </div>
+            <div class="row" *ngIf="!isNewEmployee">
+              <div class="col-12">
+                <div class="form-check">
+                  <input 
+                    class="form-check-input" 
+                    type="checkbox" 
+                    id="isActive"
+                    formControlName="isActive">
+                  <label class="form-check-label" for="isActive">
+                    Mitarbeiter ist aktiv
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Adresse -->
+        <div class="card mb-4" formGroupName="address">
+          <div class="card-header">
+            <h5 class="card-title mb-0">
+              <i class="bi bi-geo-alt me-2"></i>
+              Adresse
+            </h5>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-12">
+                <div class="mb-3">
+                  <label for="street" class="form-label">Straße und Hausnummer *</label>
+                  <input 
+                    type="text" 
+                    class="form-control" 
+                    id="street"
+                    formControlName="street"
+                    [class.is-invalid]="employeeForm.get('address.street')?.invalid && employeeForm.get('address.street')?.touched">
+                  <div class="invalid-feedback" *ngIf="employeeForm.get('address.street')?.invalid && employeeForm.get('address.street')?.touched">
+                    Straße ist erforderlich
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-3">
+                <div class="mb-3">
+                  <label for="postalCode" class="form-label">PLZ *</label>
+                  <input 
+                    type="text" 
+                    class="form-control" 
+                    id="postalCode"
+                    formControlName="postalCode"
+                    [class.is-invalid]="employeeForm.get('address.postalCode')?.invalid && employeeForm.get('address.postalCode')?.touched">
+                  <div class="invalid-feedback" *ngIf="employeeForm.get('address.postalCode')?.invalid && employeeForm.get('address.postalCode')?.touched">
+                    PLZ ist erforderlich
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="city" class="form-label">Stadt *</label>
+                  <input 
+                    type="text" 
+                    class="form-control" 
+                    id="city"
+                    formControlName="city"
+                    [class.is-invalid]="employeeForm.get('address.city')?.invalid && employeeForm.get('address.city')?.touched">
+                  <div class="invalid-feedback" *ngIf="employeeForm.get('address.city')?.invalid && employeeForm.get('address.city')?.touched">
+                    Stadt ist erforderlich
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="mb-3">
+                  <label for="country" class="form-label">Land *</label>
+                  <input 
+                    type="text" 
+                    class="form-control" 
+                    id="country"
+                    formControlName="country"
+                    [class.is-invalid]="employeeForm.get('address.country')?.invalid && employeeForm.get('address.country')?.touched">
+                  <div class="invalid-feedback" *ngIf="employeeForm.get('address.country')?.invalid && employeeForm.get('address.country')?.touched">
+                    Land ist erforderlich
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Aktionen -->
+        <div class="card">
+          <div class="card-body">
+            <div class="d-flex justify-content-between">
+              <button 
+                type="button" 
+                class="btn btn-outline-secondary"
+                (click)="cancelEdit()">
+                <i class="bi bi-x-circle me-2"></i>
+                Abbrechen
+              </button>
+              <button 
+                type="submit" 
+                class="btn btn-primary"
+                [disabled]="employeeForm.invalid || isLoading">
+                <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
+                <i *ngIf="!isLoading" class="bi bi-check-circle me-2"></i>
+                {{ isNewEmployee ? 'Erstellen' : 'Speichern' }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+
+      <!-- Read-Only Ansicht -->
+      <div *ngIf="!isEditMode && employee">
+        <!-- Persönliche Daten Card -->
+        <div class="card mb-4">
+          <div class="card-header">
+            <h5 class="card-title mb-0">
+              <i class="bi bi-person me-2"></i>
+              Persönliche Daten
+            </h5>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label class="form-label fw-bold">Name:</label>
+                  <p class="mb-0">{{ employee.firstName }} {{ employee.lastName }}</p>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label class="form-label fw-bold">Status:</label>
+                  <p class="mb-0">
+                    <span class="badge" [ngClass]="employee.isActive ? 'bg-success' : 'bg-secondary'">
+                      {{ employee.isActive ? 'Aktiv' : 'Inaktiv' }}
+                    </span>
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label class="form-label fw-bold">E-Mail:</label>
+                  <p class="mb-0">
+                    <a [href]="'mailto:' + employee.email" class="text-decoration-none">
+                      {{ employee.email }}
+                    </a>
+                  </p>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label class="form-label fw-bold">Telefon:</label>
+                  <p class="mb-0">
+                    <a [href]="'tel:' + employee.phone" class="text-decoration-none">
+                      {{ employee.phone }}
+                    </a>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Berufliche Daten Card -->
+        <div class="card mb-4">
+          <div class="card-header">
+            <h5 class="card-title mb-0">
+              <i class="bi bi-briefcase me-2"></i>
+              Berufliche Daten
+            </h5>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label class="form-label fw-bold">Position:</label>
+                  <p class="mb-0">{{ employee.position }}</p>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label class="form-label fw-bold">Abteilung:</label>
+                  <p class="mb-0">
+                    <span class="badge" [ngClass]="getDepartmentBadgeClass(employee.department)">
+                      {{ employee.department }}
+                    </span>
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label class="form-label fw-bold">Einstellungsdatum:</label>
+                  <p class="mb-0">{{ employee.hireDate | date:'dd.MM.yyyy' }}</p>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label class="form-label fw-bold">Stundensatz:</label>
+                  <p class="mb-0">{{ employee.hourlyRate ? (employee.hourlyRate | currency:'EUR':'symbol':'1.2-2':'de') : 'Nicht angegeben' }}</p>
+                </div>
+              </div>
+            </div>
+            <div class="row" *ngIf="employee.skills && employee.skills.length > 0">
+              <div class="col-12">
+                <div class="mb-3">
+                  <label class="form-label fw-bold">Fähigkeiten:</label>
+                  <p class="mb-0">
+                    <span *ngFor="let skill of employee.skills; let last = last" class="badge bg-secondary me-1 mb-1">
+                      {{ skill }}
+                    </span>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Adresse Card -->
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-title mb-0">
+              <i class="bi bi-geo-alt me-2"></i>
+              Adresse
+            </h5>
+          </div>
+          <div class="card-body">
+            <address class="mb-0">
+              {{ employee.address.street }}<br>
+              {{ employee.address.postalCode }} {{ employee.address.city }}<br>
+              {{ employee.address.country }}
+            </address>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

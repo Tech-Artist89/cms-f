@@ -1,0 +1,256 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Terminplanung</h2>
+        <button class="btn btn-primary" routerLink="/schedules/new">
+          <i class="bi bi-plus"></i> Neuer Termin
+        </button>
+      </div>
+
+      <div class="alert alert-danger" *ngIf="error">
+        {{ error }}
+      </div>
+
+      <!-- Kalender-Navigation -->
+      <div class="card mb-3">
+        <div class="card-header">
+          <div class="row align-items-center">
+            <div class="col-md-6">
+              <div class="btn-group" role="group">
+                <button class="btn btn-outline-secondary" (click)="previousPeriod()">
+                  <i class="bi bi-chevron-left"></i>
+                </button>
+                <button class="btn btn-outline-primary" (click)="today()">Heute</button>
+                <button class="btn btn-outline-secondary" (click)="nextPeriod()">
+                  <i class="bi bi-chevron-right"></i>
+                </button>
+              </div>
+            </div>
+            <div class="col-md-6 text-end">
+              <div class="btn-group" role="group">
+                <button 
+                  class="btn" 
+                  [class.btn-primary]="currentView === 'month'" 
+                  [class.btn-outline-secondary]="currentView !== 'month'"
+                  (click)="changeView('month')">
+                  Monat
+                </button>
+                <button 
+                  class="btn" 
+                  [class.btn-primary]="currentView === 'week'" 
+                  [class.btn-outline-secondary]="currentView !== 'week'"
+                  (click)="changeView('week')">
+                  Woche
+                </button>
+                <button 
+                  class="btn" 
+                  [class.btn-primary]="currentView === 'day'" 
+                  [class.btn-outline-secondary]="currentView !== 'day'"
+                  (click)="changeView('day')">
+                  Tag
+                </button>
+                <button 
+                  class="btn" 
+                  [class.btn-primary]="currentView === 'list'" 
+                  [class.btn-outline-secondary]="currentView !== 'list'"
+                  (click)="changeView('list')">
+                  Liste
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <!-- Heutige Termine Sidebar -->
+        <div class="col-md-3">
+          <div class="card mb-3">
+            <div class="card-header">
+              <h6 class="card-title mb-0">
+                <i class="bi bi-calendar-day"></i> Heute
+              </h6>
+            </div>
+            <div class="card-body">
+              <div *ngIf="todaysAppointments.length === 0" class="text-muted text-center py-3">
+                Keine Termine heute
+              </div>
+              <div *ngFor="let appointment of todaysAppointments" class="border-start border-3 ps-2 mb-2"
+                   [style.border-color]="'var(--bs-' + getAppointmentTypeInfo(appointment.appointment_type).color + ')'">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div class="flex-grow-1">
+                    <small class="text-muted">{{ formatTime(appointment.start_datetime) }}</small>
+                    <div class="fw-bold">{{ appointment.title }}</div>
+                    <small class="text-muted">{{ appointment.customer_name }}</small>
+                  </div>
+                  <span [class]="getStatusBadgeClass(appointment.status)">
+                    {{ getStatusLabel(appointment.status) }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h6 class="card-title mb-0">
+                <i class="bi bi-calendar-week"></i> Nächste 7 Tage
+              </h6>
+            </div>
+            <div class="card-body">
+              <div *ngIf="upcomingAppointments.length === 0" class="text-muted text-center py-3">
+                Keine anstehenden Termine
+              </div>
+              <div *ngFor="let appointment of upcomingAppointments" class="border-start border-3 ps-2 mb-2"
+                   [style.border-color]="'var(--bs-' + getAppointmentTypeInfo(appointment.appointment_type).color + ')'">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div class="flex-grow-1">
+                    <small class="text-muted">
+                      {{ appointment.start_datetime | date:'dd.MM' }} 
+                      {{ formatTime(appointment.start_datetime) }}
+                    </small>
+                    <div class="fw-bold">{{ appointment.title }}</div>
+                    <small class="text-muted">{{ appointment.customer_name }}</small>
+                  </div>
+                  <span [class]="getStatusBadgeClass(appointment.status)">
+                    {{ getStatusLabel(appointment.status) }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hauptkalender/Liste -->
+        <div class="col-md-9">
+          <div class="text-center" *ngIf="loading">
+            <div class="spinner-border" role="status">
+              <span class="visually-hidden">Laden...</span>
+            </div>
+          </div>
+
+          <div class="card" *ngIf="!loading && currentView === 'list'">
+            <div class="card-header">
+              <h5 class="card-title mb-0">Terminliste</h5>
+            </div>
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="table table-striped table-hover mb-0">
+                  <thead class="table-dark">
+                    <tr>
+                      <th>Datum & Zeit</th>
+                      <th>Titel</th>
+                      <th>Kunde</th>
+                      <th>Typ</th>
+                      <th>Status</th>
+                      <th>Ort</th>
+                      <th>Aktionen</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let appointment of appointments" [class.table-warning]="isPast(appointment.start_datetime)">
+                      <td>
+                        <div>{{ appointment.start_datetime | date:'dd.MM.yyyy' }}</div>
+                        <small class="text-muted">
+                          {{ formatTime(appointment.start_datetime) }} - {{ formatTime(appointment.end_datetime) }}
+                        </small>
+                      </td>
+                      <td>
+                        <div class="fw-bold">{{ appointment.title }}</div>
+                        <small class="text-muted" *ngIf="appointment.description">{{ appointment.description }}</small>
+                      </td>
+                      <td>{{ appointment.customer_name || '-' }}</td>
+                      <td>
+                        <span class="badge bg-{{ getAppointmentTypeInfo(appointment.appointment_type).color }}">
+                          <i class="bi bi-{{ getAppointmentTypeInfo(appointment.appointment_type).icon }}"></i>
+                          {{ getAppointmentTypeInfo(appointment.appointment_type).label }}
+                        </span>
+                      </td>
+                      <td>
+                        <span [class]="getStatusBadgeClass(appointment.status)">
+                          {{ getStatusLabel(appointment.status) }}
+                        </span>
+                      </td>
+                      <td>{{ appointment.location || '-' }}</td>
+                      <td>
+                        <div class="btn-group" role="group">
+                          <button 
+                            class="btn btn-sm btn-outline-primary" 
+                            [routerLink]="['/schedules', appointment.id]"
+                            title="Anzeigen">
+                            <i class="bi bi-eye"></i>
+                          </button>
+                          <button 
+                            class="btn btn-sm btn-outline-secondary" 
+                            [routerLink]="['/schedules', appointment.id, 'edit']"
+                            title="Bearbeiten">
+                            <i class="bi bi-pencil"></i>
+                          </button>
+                          <div class="btn-group" ngbDropdown role="group">
+                            <button class="btn btn-sm btn-outline-info dropdown-toggle" ngbDropdownToggle>
+                              Status
+                            </button>
+                            <div class="dropdown-menu" ngbDropdownMenu>
+                              <button 
+                                class="dropdown-item" 
+                                *ngFor="let status of appointmentStatuses"
+                                (click)="updateAppointmentStatus(appointment.id, status.value)">
+                                <span class="badge bg-{{ status.color }} me-2">{{ status.label }}</span>
+                              </button>
+                            </div>
+                          </div>
+                          <button 
+                            class="btn btn-sm btn-outline-success" 
+                            (click)="sendConfirmation(appointment.id)"
+                            title="Bestätigung senden">
+                            <i class="bi bi-envelope-check"></i>
+                          </button>
+                          <button 
+                            class="btn btn-sm btn-outline-warning" 
+                            (click)="sendReminder(appointment.id)"
+                            title="Erinnerung senden">
+                            <i class="bi bi-bell"></i>
+                          </button>
+                          <button 
+                            class="btn btn-sm btn-outline-danger" 
+                            (click)="deleteAppointment(appointment.id)"
+                            title="Löschen">
+                            <i class="bi bi-trash"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr *ngIf="appointments.length === 0">
+                      <td colspan="7" class="text-center text-muted py-4">
+                        Keine Termine im ausgewählten Zeitraum
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Kalender-Ansicht (Placeholder für zukünftige Implementierung) -->
+          <div class="card" *ngIf="!loading && currentView !== 'list'">
+            <div class="card-header">
+              <h5 class="card-title mb-0">
+                Kalender - {{ currentView === 'month' ? 'Monat' : currentView === 'week' ? 'Woche' : 'Tag' }}
+                ({{ currentDate | date:'MMMM yyyy' }})
+              </h5>
+            </div>
+            <div class="card-body">
+              <div class="text-center text-muted py-5">
+                <i class="bi bi-calendar3 display-4"></i>
+                <p class="mt-3">Kalender-Ansicht wird in einer zukünftigen Version implementiert.</p>
+                <p>Verwenden Sie vorerst die Listen-Ansicht.</p>
+                <button class="btn btn-primary" (click)="changeView('list')">Zur Listen-Ansicht</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

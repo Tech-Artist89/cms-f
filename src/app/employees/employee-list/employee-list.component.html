@@ -1,0 +1,155 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">
+          <i class="bi bi-person-badge me-2"></i>
+          Mitarbeiter
+        </h1>
+        <button type="button" class="btn btn-primary" routerLink="/employees/new">
+          <i class="bi bi-person-plus me-2"></i>
+          Neuer Mitarbeiter
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter und Suche -->
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <div class="input-group">
+        <span class="input-group-text">
+          <i class="bi bi-search"></i>
+        </span>
+        <input 
+          type="text" 
+          class="form-control" 
+          placeholder="Mitarbeiter suchen..."
+          [(ngModel)]="searchTerm"
+          (ngModelChange)="onSearch()">
+      </div>
+    </div>
+    <div class="col-md-3">
+      <select class="form-select" [(ngModel)]="selectedDepartment" (ngModelChange)="onFilterChange()">
+        <option value="">Alle Abteilungen</option>
+        <option value="Heizung">Heizung</option>
+        <option value="Sanitär">Sanitär</option>
+        <option value="Klima">Klima</option>
+        <option value="Management">Management</option>
+      </select>
+    </div>
+    <div class="col-md-3">
+      <select class="form-select" [(ngModel)]="selectedStatus" (ngModelChange)="onFilterChange()">
+        <option value="">Alle Status</option>
+        <option value="active">Aktiv</option>
+        <option value="inactive">Inaktiv</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Mitarbeiter-Tabelle -->
+  <div class="card">
+    <div class="card-header">
+      <h5 class="card-title mb-0">
+        Mitarbeiter ({{ filteredEmployees.length }})
+      </h5>
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Name</th>
+              <th>Position</th>
+              <th>Abteilung</th>
+              <th class="mobile-hidden">E-Mail</th>
+              <th class="mobile-hidden">Telefon</th>
+              <th class="mobile-hidden">Einstellungsdatum</th>
+              <th>Status</th>
+              <th>Aktionen</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let employee of filteredEmployees" [class.table-secondary]="!employee.isActive">
+              <td>
+                <div class="d-flex align-items-center">
+                  <div class="me-3">
+                    <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" 
+                         style="width: 40px; height: 40px;">
+                      {{ getInitials(employee.firstName, employee.lastName) }}
+                    </div>
+                  </div>
+                  <div>
+                    <div class="fw-semibold">{{ employee.firstName }} {{ employee.lastName }}</div>
+                    <div class="text-muted small">ID: {{ employee.id }}</div>
+                  </div>
+                </div>
+              </td>
+              <td>{{ employee.position }}</td>
+              <td>
+                <span class="badge" [ngClass]="getDepartmentBadgeClass(employee.department)">
+                  {{ employee.department }}
+                </span>
+              </td>
+              <td class="mobile-hidden">
+                <a [href]="'mailto:' + employee.email" class="text-decoration-none">
+                  {{ employee.email }}
+                </a>
+              </td>
+              <td class="mobile-hidden">
+                <a [href]="'tel:' + employee.phone" class="text-decoration-none">
+                  {{ employee.phone }}
+                </a>
+              </td>
+              <td class="mobile-hidden">{{ employee.hireDate | date:'dd.MM.yyyy' }}</td>
+              <td>
+                <span class="badge" [ngClass]="employee.isActive ? 'bg-success' : 'bg-secondary'">
+                  {{ employee.isActive ? 'Aktiv' : 'Inaktiv' }}
+                </span>
+              </td>
+              <td>
+                <div class="btn-group btn-group-sm">
+                  <button 
+                    type="button" 
+                    class="btn btn-outline-primary"
+                    [routerLink]="['/employees', employee.id]"
+                    title="Details ansehen">
+                    <i class="bi bi-eye"></i>
+                  </button>
+                  <button 
+                    type="button" 
+                    class="btn btn-outline-success"
+                    [routerLink]="['/employees', employee.id, 'edit']"
+                    title="Bearbeiten">
+                    <i class="bi bi-pencil"></i>
+                  </button>
+                  <button 
+                    type="button" 
+                    class="btn btn-outline-danger"
+                    (click)="deleteEmployee(employee)"
+                    title="Löschen">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <tr *ngIf="filteredEmployees.length === 0">
+              <td colspan="5" class="text-center py-4 d-block d-md-none">
+                <div class="text-muted">
+                  <i class="bi bi-person-x fs-1 d-block mb-2"></i>
+                  Keine Mitarbeiter gefunden
+                </div>
+              </td>
+              <td colspan="8" class="text-center py-4 d-none d-md-table-cell">
+                <div class="text-muted">
+                  <i class="bi bi-person-x fs-1 d-block mb-2"></i>
+                  Keine Mitarbeiter gefunden
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

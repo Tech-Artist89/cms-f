@@ -1,0 +1,36 @@
+<div class="dropdown">
+  <button class="btn btn-outline-secondary btn-sm dropdown-toggle" 
+          type="button" 
+          data-bs-toggle="dropdown" 
+          aria-expanded="false"
+          title="Theme wechseln">
+    <i class="bi" [ngClass]="getThemeIcon()"></i>
+    <span class="d-none d-md-inline ms-1">{{ getThemeLabel() }}</span>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li>
+      <button class="dropdown-item" 
+              [class.active]="currentTheme === 'light'"
+              (click)="setTheme('light')">
+        <i class="bi bi-sun me-2"></i>
+        Hell
+      </button>
+    </li>
+    <li>
+      <button class="dropdown-item" 
+              [class.active]="currentTheme === 'dark'"
+              (click)="setTheme('dark')">
+        <i class="bi bi-moon me-2"></i>
+        Dunkel
+      </button>
+    </li>
+    <li>
+      <button class="dropdown-item" 
+              [class.active]="currentTheme === 'auto'"
+              (click)="setTheme('auto')">
+        <i class="bi bi-circle-half me-2"></i>
+        Automatisch
+      </button>
+    </li>
+  </ul>
+</div>
