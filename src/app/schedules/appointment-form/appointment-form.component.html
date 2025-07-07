@@ -1,1 +1,195 @@
-<p>appointment-form works!</p>
+<div class="container-fluid mt-3">
+  <div class="row">
+    <div class="col-12">
+      <h1 class="h3 mb-4">
+        <i class="bi bi-calendar-plus me-2"></i>
+        {{ isEditMode ? 'Termin bearbeiten' : 'Neuer Termin' }}
+      </h1>
+    </div>
+  </div>
+
+  <div class="row" *ngIf="isLoading">
+    <div class="col-12">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border" role="status">
+          <span class="visually-hidden">Laden...</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row" *ngIf="!isLoading">
+    <div class="col-lg-8">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="card-title mb-0">
+            <i class="bi bi-calendar-week me-2"></i>
+            Termindetails
+          </h5>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="appointmentForm" (ngSubmit)="onSubmit()">
+            
+            <div class="alert alert-danger" *ngIf="errorMessage">
+              <i class="bi bi-exclamation-triangle me-2"></i>
+              {{ errorMessage }}
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-8">
+                <label for="title" class="form-label">Titel *</label>
+                <input type="text" 
+                       class="form-control" 
+                       id="title" 
+                       formControlName="title"
+                       [class.is-invalid]="appointmentForm.get('title')?.invalid && appointmentForm.get('title')?.touched">
+                <div class="invalid-feedback" *ngIf="appointmentForm.get('title')?.invalid && appointmentForm.get('title')?.touched">
+                  Titel ist erforderlich
+                </div>
+              </div>
+              <div class="col-md-4">
+                <label for="priority" class="form-label">Priorität *</label>
+                <select class="form-select" 
+                        id="priority" 
+                        formControlName="priority"
+                        [class.is-invalid]="appointmentForm.get('priority')?.invalid && appointmentForm.get('priority')?.touched">
+                  <option value="low">Niedrig</option>
+                  <option value="medium">Mittel</option>
+                  <option value="high">Hoch</option>
+                  <option value="urgent">Dringend</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="customer" class="form-label">Kunde *</label>
+                <select class="form-select" 
+                        id="customer" 
+                        formControlName="customer"
+                        [class.is-invalid]="appointmentForm.get('customer')?.invalid && appointmentForm.get('customer')?.touched">
+                  <option value="">Bitte wählen</option>
+                  <option value="1">Müller GmbH</option>
+                  <option value="2">Schmidt & Co</option>
+                  <option value="3">Weber KG</option>
+                </select>
+                <div class="invalid-feedback" *ngIf="appointmentForm.get('customer')?.invalid && appointmentForm.get('customer')?.touched">
+                  Kunde ist erforderlich
+                </div>
+              </div>
+              <div class="col-md-6">
+                <label for="employee" class="form-label">Mitarbeiter</label>
+                <select class="form-select" id="employee" formControlName="employee">
+                  <option value="">Bitte wählen</option>
+                  <option value="1">Max Mustermann</option>
+                  <option value="2">Anna Schmidt</option>
+                  <option value="3">Tom Weber</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-4">
+                <label for="date" class="form-label">Datum *</label>
+                <input type="date" 
+                       class="form-control" 
+                       id="date" 
+                       formControlName="date"
+                       [class.is-invalid]="appointmentForm.get('date')?.invalid && appointmentForm.get('date')?.touched">
+                <div class="invalid-feedback" *ngIf="appointmentForm.get('date')?.invalid && appointmentForm.get('date')?.touched">
+                  Datum ist erforderlich
+                </div>
+              </div>
+              <div class="col-md-4">
+                <label for="start_time" class="form-label">Startzeit *</label>
+                <input type="time" 
+                       class="form-control" 
+                       id="start_time" 
+                       formControlName="start_time"
+                       [class.is-invalid]="appointmentForm.get('start_time')?.invalid && appointmentForm.get('start_time')?.touched">
+                <div class="invalid-feedback" *ngIf="appointmentForm.get('start_time')?.invalid && appointmentForm.get('start_time')?.touched">
+                  Startzeit ist erforderlich
+                </div>
+              </div>
+              <div class="col-md-4">
+                <label for="end_time" class="form-label">Endzeit *</label>
+                <input type="time" 
+                       class="form-control" 
+                       id="end_time" 
+                       formControlName="end_time"
+                       [class.is-invalid]="appointmentForm.get('end_time')?.invalid && appointmentForm.get('end_time')?.touched">
+                <div class="invalid-feedback" *ngIf="appointmentForm.get('end_time')?.invalid && appointmentForm.get('end_time')?.touched">
+                  Endzeit ist erforderlich
+                </div>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="appointment_type" class="form-label">Termintyp *</label>
+                <select class="form-select" 
+                        id="appointment_type" 
+                        formControlName="appointment_type"
+                        [class.is-invalid]="appointmentForm.get('appointment_type')?.invalid && appointmentForm.get('appointment_type')?.touched">
+                  <option value="consultation">Beratung</option>
+                  <option value="installation">Installation</option>
+                  <option value="maintenance">Wartung</option>
+                  <option value="repair">Reparatur</option>
+                  <option value="inspection">Inspektion</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label for="location" class="form-label">Ort</label>
+                <input type="text" class="form-control" id="location" formControlName="location" placeholder="Adresse oder Beschreibung">
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-12">
+                <label for="description" class="form-label">Beschreibung</label>
+                <textarea class="form-control" 
+                          id="description" 
+                          formControlName="description"
+                          rows="3"
+                          placeholder="Zusätzliche Informationen zum Termin..."></textarea>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-12">
+                <label for="notes" class="form-label">Notizen</label>
+                <textarea class="form-control" 
+                          id="notes" 
+                          formControlName="notes"
+                          rows="2"
+                          placeholder="Interne Notizen..."></textarea>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-12">
+                <hr>
+                <div class="d-flex justify-content-between">
+                  <button type="button" class="btn btn-secondary" (click)="cancel()">
+                    <i class="bi bi-x-circle me-2"></i>
+                    Abbrechen
+                  </button>
+                  <button type="submit" class="btn btn-primary" [disabled]="isLoading">
+                    <i class="bi bi-check-circle me-2"></i>
+                    <span *ngIf="isLoading">
+                      <span class="spinner-border spinner-border-sm me-2"></span>
+                      Speichern...
+                    </span>
+                    <span *ngIf="!isLoading">
+                      {{ isEditMode ? 'Änderungen speichern' : 'Termin erstellen' }}
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

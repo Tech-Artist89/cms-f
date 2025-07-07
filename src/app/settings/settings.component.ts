@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ThemeService } from '../services/theme.service';
+import { ThemeService } from '../shared/theme.service';
 
 @Component({
   selector: 'app-settings',

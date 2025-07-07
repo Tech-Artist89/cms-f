@@ -1,5 +1,5 @@
-<app-navigation></app-navigation>
+<app-navigation *ngIf="showNavigation && isAuthenticated"></app-navigation>
 
-<main class="main-content">
+<main class="main-content" [class.no-navigation]="!showNavigation || !isAuthenticated">
   <router-outlet />
 </main>

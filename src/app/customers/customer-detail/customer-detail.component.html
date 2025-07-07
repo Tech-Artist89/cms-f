@@ -1,1 +1,165 @@
-<p>customer-detail works!</p>
+<div class="container-fluid mt-3">
+  <div class="row">
+    <div class="col-12">
+      <h1 class="h3 mb-4">
+        <i class="bi bi-person-plus me-2"></i>
+        {{ isEditMode ? 'Kunde bearbeiten' : 'Neuer Kunde' }}
+      </h1>
+    </div>
+  </div>
+
+  <div class="row" *ngIf="isLoading">
+    <div class="col-12">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border" role="status">
+          <span class="visually-hidden">Laden...</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row" *ngIf="!isLoading">
+    <div class="col-lg-8">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="card-title mb-0">
+            <i class="bi bi-person-lines-fill me-2"></i>
+            Kundeninformationen
+          </h5>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="customerForm" (ngSubmit)="onSubmit()">
+            
+            <div class="alert alert-danger" *ngIf="errorMessage">
+              <i class="bi bi-exclamation-triangle me-2"></i>
+              {{ errorMessage }}
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="customer_number" class="form-label">Kundennummer *</label>
+                <input type="text" 
+                       class="form-control" 
+                       id="customer_number" 
+                       formControlName="customer_number"
+                       [class.is-invalid]="customerForm.get('customer_number')?.invalid && customerForm.get('customer_number')?.touched">
+                <div class="invalid-feedback" *ngIf="customerForm.get('customer_number')?.invalid && customerForm.get('customer_number')?.touched">
+                  Kundennummer ist erforderlich
+                </div>
+              </div>
+              <div class="col-md-6">
+                <label for="customer_type" class="form-label">Kundentyp *</label>
+                <select class="form-select" 
+                        id="customer_type" 
+                        formControlName="customer_type"
+                        [class.is-invalid]="customerForm.get('customer_type')?.invalid && customerForm.get('customer_type')?.touched">
+                  <option value="private">Privatkunde</option>
+                  <option value="business">Geschäftskunde</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-2">
+                <label for="salutation" class="form-label">Anrede</label>
+                <select class="form-select" id="salutation" formControlName="salutation">
+                  <option value="">Bitte wählen</option>
+                  <option value="herr">Herr</option>
+                  <option value="frau">Frau</option>
+                </select>
+              </div>
+              <div class="col-md-2">
+                <label for="title" class="form-label">Titel</label>
+                <input type="text" class="form-control" id="title" formControlName="title">
+              </div>
+              <div class="col-md-4">
+                <label for="first_name" class="form-label">Vorname *</label>
+                <input type="text" 
+                       class="form-control" 
+                       id="first_name" 
+                       formControlName="first_name"
+                       [class.is-invalid]="customerForm.get('first_name')?.invalid && customerForm.get('first_name')?.touched">
+                <div class="invalid-feedback" *ngIf="customerForm.get('first_name')?.invalid && customerForm.get('first_name')?.touched">
+                  Vorname ist erforderlich
+                </div>
+              </div>
+              <div class="col-md-4">
+                <label for="last_name" class="form-label">Nachname *</label>
+                <input type="text" 
+                       class="form-control" 
+                       id="last_name" 
+                       formControlName="last_name"
+                       [class.is-invalid]="customerForm.get('last_name')?.invalid && customerForm.get('last_name')?.touched">
+                <div class="invalid-feedback" *ngIf="customerForm.get('last_name')?.invalid && customerForm.get('last_name')?.touched">
+                  Nachname ist erforderlich
+                </div>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="email" class="form-label">E-Mail</label>
+                <input type="email" 
+                       class="form-control" 
+                       id="email" 
+                       formControlName="email"
+                       [class.is-invalid]="customerForm.get('email')?.invalid && customerForm.get('email')?.touched">
+                <div class="invalid-feedback" *ngIf="customerForm.get('email')?.invalid && customerForm.get('email')?.touched">
+                  Bitte geben Sie eine gültige E-Mail-Adresse ein
+                </div>
+              </div>
+              <div class="col-md-6">
+                <label for="category" class="form-label">Kategorie *</label>
+                <select class="form-select" 
+                        id="category" 
+                        formControlName="category"
+                        [class.is-invalid]="customerForm.get('category')?.invalid && customerForm.get('category')?.touched">
+                  <option value="A">A - Premium</option>
+                  <option value="B">B - Standard</option>
+                  <option value="C">C - Basis</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-4">
+                <label for="phone" class="form-label">Telefon</label>
+                <input type="tel" class="form-control" id="phone" formControlName="phone">
+              </div>
+              <div class="col-md-4">
+                <label for="mobile" class="form-label">Mobiltelefon</label>
+                <input type="tel" class="form-control" id="mobile" formControlName="mobile">
+              </div>
+              <div class="col-md-4">
+                <label for="fax" class="form-label">Fax</label>
+                <input type="tel" class="form-control" id="fax" formControlName="fax">
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-12">
+                <hr>
+                <div class="d-flex justify-content-between">
+                  <button type="button" class="btn btn-secondary" (click)="cancel()">
+                    <i class="bi bi-x-circle me-2"></i>
+                    Abbrechen
+                  </button>
+                  <button type="submit" class="btn btn-primary" [disabled]="isLoading">
+                    <i class="bi bi-check-circle me-2"></i>
+                    <span *ngIf="isLoading">
+                      <span class="spinner-border spinner-border-sm me-2"></span>
+                      Speichern...
+                    </span>
+                    <span *ngIf="!isLoading">
+                      {{ isEditMode ? 'Änderungen speichern' : 'Kunde erstellen' }}
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

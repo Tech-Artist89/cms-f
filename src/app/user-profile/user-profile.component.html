@@ -356,7 +356,7 @@
           
           <div class="mb-3" *ngIf="user?.date_joined">
             <strong>Registriert am:</strong>
-            <span class="text-muted">{{ user.date_joined | date:'dd.MM.yyyy' }}</span>
+            <span class="text-muted">{{ user?.date_joined | date:'dd.MM.yyyy' }}</span>
           </div>
 
           <hr>

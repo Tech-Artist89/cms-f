@@ -43,14 +43,20 @@ export class TimetrackingService {
   startTimer(projectId?: number, taskDescription?: string): Observable<TimeEntry> {
     // Create new time entry with correct field names
     const now = new Date();
-    return this.http.post<TimeEntry>(`${this.apiUrl}/entries/`, {
+    const timeEntry: any = {
       entry_type: 'work',
       date: now.toISOString().split('T')[0],
       start_time: now.toTimeString().split(' ')[0],
-      project: projectId,
       description: taskDescription || 'Neuer Eintrag',
       is_billable: true
-    });
+    };
+    
+    // Only add project if it's a valid number
+    if (projectId && projectId > 0) {
+      timeEntry.project = projectId;
+    }
+    
+    return this.http.post<TimeEntry>(`${this.apiUrl}/entries/`, timeEntry);
   }
 
   stopTimer(id: string): Observable<TimeEntry> {

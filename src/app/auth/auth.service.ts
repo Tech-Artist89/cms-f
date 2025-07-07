@@ -63,10 +63,13 @@ export class AuthService {
   }
 
   logout(): void {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('refresh_token');
-    localStorage.removeItem('user');
+    console.log('AuthService: Logging out user');
+    localStorage.clear(); // Clear all localStorage data
     this.tokenSubject.next(null);
+    
+    // Verify logout
+    console.log('AuthService: Token after logout:', this.getToken());
+    console.log('AuthService: User after logout:', this.getUser());
   }
 
   getToken(): string | null {
@@ -74,7 +77,28 @@ export class AuthService {
   }
 
   isAuthenticated(): boolean {
-    return !!this.getToken();
+    const token = this.getToken();
+    if (!token) {
+      return false;
+    }
+    
+    // Check if token is expired (basic check)
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const currentTime = Math.floor(Date.now() / 1000);
+      
+      if (payload.exp && payload.exp < currentTime) {
+        // Token is expired, remove it
+        this.logout();
+        return false;
+      }
+      
+      return true;
+    } catch (error) {
+      // Invalid token format
+      this.logout();
+      return false;
+    }
   }
 
   getUser() {

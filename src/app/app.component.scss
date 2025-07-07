@@ -1,4 +1,9 @@
 .main-content {
   padding-top: 1rem;
   min-height: calc(100vh - 56px);
+  
+  &.no-navigation {
+    padding-top: 0;
+    min-height: 100vh;
+  }
 }

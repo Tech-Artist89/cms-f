@@ -6,6 +6,8 @@ export const routes: Routes = [
   { path: 'login', loadComponent: () => import('./auth/login/login.component').then(c => c.LoginComponent) },
   { path: 'register', loadComponent: () => import('./auth/register/register.component').then(c => c.RegisterComponent) },
   { path: 'dashboard', loadComponent: () => import('./dashboard/dashboard.component').then(c => c.DashboardComponent), canActivate: [AuthGuard] },
+  { path: 'profile', loadComponent: () => import('./user-profile/user-profile.component').then(c => c.UserProfileComponent), canActivate: [AuthGuard] },
+  { path: 'settings', loadComponent: () => import('./settings/settings.component').then(c => c.SettingsComponent), canActivate: [AuthGuard] },
   { path: 'customers', loadChildren: () => import('./customers/customers.module').then(m => m.CustomersModule), canActivate: [AuthGuard] },
   { path: 'quotes', loadChildren: () => import('./quotes/quotes.module').then(m => m.QuotesModule), canActivate: [AuthGuard] },
   { path: 'projects', loadChildren: () => import('./projects/projects.module').then(m => m.ProjectsModule), canActivate: [AuthGuard] },
